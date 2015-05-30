@@ -1,7 +1,5 @@
 require "libusb"
 
-
-
 def print_input(c)
 	keycode = ['None','None','None','None','a','b','c','d','e','f', #0-9
 	  'g','h','i','j','k','l','m','n','o','p', #10-19
@@ -88,7 +86,12 @@ def print_input(c)
 	]
 	t = Time.now
 	tu = t.to_i*1000 + t.usec/1000
-	puts tu.to_s+","+keycode[c]+","+keyX[c].to_s+","+keyY[c].to_s+"\n"
+	
+	data = tu.to_s+","+keycode[c]+","+keyX[c].to_s+","+keyY[c].to_s+"\n"
+	f = File.open($filename, "a")
+	f.write(data)
+	f.close
+	puts data
 end
 
 u = LIBUSB::Context.new
@@ -103,6 +106,10 @@ rescue LIBUSB::ERROR_BUSY
   h.detach_kernel_driver(0)
   hs = h.claim_interface(0)
 end
+
+dir = File::dirname(__FILE__) + "/data/" 
+$filename = Time.now.strftime(dir + "%Y%m%d_%H%M.csv")
+
 
 while true do
   begin
