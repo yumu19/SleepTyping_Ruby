@@ -15,12 +15,12 @@ end
 
 while true do
   begin
-        c = h.interrupt_transfer(
+        s = h.interrupt_transfer(
                 :endpoint => ep,
-                :dataIn   => 8,
+                :dataIn   => 16,
                 :timeout  => 1000
         )
-        p c
+        s.bytes {|b| print b.to_s(10)+"\n" if b != 0}
   rescue LIBUSB::ERROR_TIMEOUT
   end
 end
