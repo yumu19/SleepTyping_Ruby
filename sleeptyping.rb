@@ -4,7 +4,7 @@ def print_input(c)
 	keycode = ['None','None','None','None','a','b','c','d','e','f', #0-9
 	  'g','h','i','j','k','l','m','n','o','p', #10-19
 	  'q','r','s','t','u','v','w','x','y','z', #20-29
-	  '1','2','3','4','5','6','7','8','9','00000', #30-39
+	  '1','2','3','4','5','6','7','8','9','0', #30-39
 	  'Enter','Esc','Bksp','Tab','Space','None','None','@','[','None', #40-49
 	  ']',';','*','hz','<','>','/','Caps','F1','F2', #50-59
 	  'F3','F4','F5','F6','F7','F8','F9','F10','F11','F12', #60-69
@@ -84,18 +84,22 @@ def print_input(c)
 	  0,0,0,0,0,0,0,0,0,0, #240-249
 	  0,0,0,0,0,0 #250-255
 	]
-	t = Time.now
-	tu = t.to_i*1000 + t.usec/1000
+	if keycode[c] != 'None' then
+		t = Time.now
+		tu = t.to_i*1000 + t.usec/1000
 	
-	data = tu.to_s+","+keycode[c]+","+keyX[c].to_s+","+keyY[c].to_s+"\n"
-	f = File.open($filename, "a")
-	f.write(data)
-	f.close
-	puts data
+		data = tu.to_s+","+keycode[c]+","+keyX[c].to_s+","+keyY[c].to_s+","+ARGV[0]+"\n"
+		f = File.open($filename, "a")
+		f.write(data)
+		f.close
+		puts data
+	end
 end
 
+kbnum = ARGV[0].to_i
+
 u = LIBUSB::Context.new
-d = u.devices[0]
+d = u.devices[kbnum]
 h = d.open
 i = d.interfaces[0]
 ep = i.endpoints.first
@@ -104,12 +108,11 @@ begin
   h.claim_interface(0)
 rescue LIBUSB::ERROR_BUSY
   h.detach_kernel_driver(0)
-  hs = h.claim_interface(0)
+  h.claim_interface(0)
 end
 
 dir = File::dirname(__FILE__) + "/data/" 
-$filename = Time.now.strftime(dir + "%Y%m%d_%H%M.csv")
-
+$filename = Time.now.strftime(dir + "%Y%m%d_%H%M_"+kbnum.to_s+".csv")
 
 while true do
   begin
