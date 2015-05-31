@@ -87,8 +87,8 @@ def print_input(c)
 	if keycode[c] != 'None' then
 		t = Time.now
 		tu = t.to_i*1000 + t.usec/1000
-	
-		data = tu.to_s+","+keycode[c]+","+keyX[c].to_s+","+keyY[c].to_s+","+ARGV[0]+"\n"
+
+		data = ARGV[0]+","+tu.to_s+","+keyX[c].to_s+","+keyY[c].to_s+","+keycode[c]+","+t.to_s+"\n"
 		f = File.open($filename, "a")
 		f.write(data)
 		f.close
@@ -111,7 +111,7 @@ rescue LIBUSB::ERROR_BUSY
   h.claim_interface(0)
 end
 
-dir = File::dirname(__FILE__) + "/data/" 
+dir = File::dirname(__FILE__) + "/data/"
 $filename = Time.now.strftime(dir + "%Y%m%d_%H%M_"+kbnum.to_s+".csv")
 
 while true do
